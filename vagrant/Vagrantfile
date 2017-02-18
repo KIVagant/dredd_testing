@@ -1,0 +1,56 @@
+Vagrant.require_version ">= 1.5"
+
+Vagrant.configure("2") do |config|
+    config.vm.hostname = "dredd.dev"
+    config.vm.provider :virtualbox do |v|
+        v.name = "dredd_test"
+        v.customize [
+            "modifyvm", :id,
+            "--name", "dredd_test",
+            "--memory", 1048,
+            "--natdnshostresolver1", "on",
+            "--natdnsproxy1", "on",
+            "--cpus", 2,
+        ]
+    end
+
+    # рекомендую начать с этого образа,
+    # т.к. в официальных Ubuntu/Debian возникают проблемы с установкой пакетов npm
+    config.vm.box = "centos/7"
+
+    # IP-адрес виртуальной машины
+    config.vm.network :private_network, ip: "192.168.99.105"
+    config.ssh.forward_agent = true
+
+    # С помощью переменных окружения можно запускать виртуальную машину,
+    # указывая ей произвольный путь к каталогу с вашим проектом для монтирования
+    if ENV['DREDD_GITHUB_TEST_PATH']
+        config.vm.synced_folder "#{ENV['DREDD_GITHUB_TEST_PATH']}", "/var/dredd_test",
+            :owner=> 'vagrant',
+            :group=> 'vagrant'
+    else
+        # Путь к каталогу с проектом по-умолчанию и путь для монтирования внутри машины
+        config.vm.synced_folder "~/dredd_test", "/var/dredd_test",
+            :owner=> 'vagrant',
+            :group=> 'vagrant'
+    end
+
+    # После разворачивания виртуалки первым внутри будет выполнен этот файл
+    config.vm.provision :shell, path: "provision.sh"
+
+    # Устанавливаем переменные окружения для гостевой ОС,
+    # чтобы передавать GitHub API токен, и ключи Apiary снаружи
+    config.vm.provision "shell" do |s|
+        s.binary = true # Replace Windows line endings with Unix line endings.
+        s.inline = %Q(sudo echo \
+          "GITHUB_API_TOKEN=#{ENV['GITHUB_API_TOKEN']}\nAPIARY_API_KEY=#{ENV['APIARY_API_KEY']}\nAPIARY_API_NAME=#{ENV['APIARY_API_NAME']}" \
+          > /etc/environment
+          )
+    end
+
+    # Последняя команда, которая фактически запустит тестирование проекта сразу после старта VM
+    config.vm.provision "shell" do |s|
+        s.binary = true # Replace Windows line endings with Unix line endings.
+        s.inline = %Q(cd /var/dredd_test && composer install && composer check)
+    end
+end

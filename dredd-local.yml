@@ -1,0 +1,35 @@
+reporter: apiary
+#custom:
+#  apiaryApiKey: 12345 # better to use console argument
+#  apiaryApiName: abcdefg
+#header: ["Authorization: token 12345"] # better to use console argument
+dry-run: null
+hookfiles: hooks/*.php # каталог с hooks
+language: vendor/bin/dredd-hooks-php # бинарник будет добавлен composer-ом
+sandbox: false
+server-wait: 3
+init: false
+names: false
+only: []
+output: []
+sorted: false
+user: null
+inline-errors: false
+details: false
+method: []
+color: true
+level: info
+timestamp: false
+silent: false
+path: []
+hooks-worker-timeout: 5000
+hooks-worker-connect-timeout: 1500
+hooks-worker-connect-retry: 500
+hooks-worker-after-connect-wait: 100
+hooks-worker-term-timeout: 5000
+hooks-worker-term-retry: 500
+hooks-worker-handler-host: localhost
+hooks-worker-handler-port: 61321
+blueprint: github-api.md # путь к API Blueprint документации
+endpoint: 'http://localhost:3000' # тестируемый хост
+server: node app.js # команда, с помощью которой будет запущен локальный "сервер" с прототипом API

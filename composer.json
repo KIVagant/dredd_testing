@@ -1,0 +1,19 @@
+{
+    "name": "kivagant/github-api-test",
+    "type": "project",
+    "license": "MIT",
+    "description": "Github API test example with dredd and Apiary",
+    "require": {
+    },
+    "require-dev": {
+        "ddelnano/dredd-hooks-php": "^1.1"
+    },
+    "scripts": {
+        "check": [
+            "@test-mock",
+            "@test"
+        ],
+        "test": "dredd --header=\"Authorization: token ${GITHUB_API_TOKEN}\" --config=./dredd-local.yml",
+        "test-mock": "dredd --header=\"Authorization: token ${GITHUB_API_TOKEN}\" --config=./dredd.yml"
+    }
+}
