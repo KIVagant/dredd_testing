@@ -51,6 +51,6 @@ Vagrant.configure("2") do |config|
     # Последняя команда, которая фактически запустит тестирование проекта сразу после старта VM
     config.vm.provision "shell" do |s|
         s.binary = true # Replace Windows line endings with Unix line endings.
-        s.inline = %Q(cd /var/dredd_test && composer install && composer check)
+        s.inline = %Q(cd /var/dredd_test && composer install && npm install && composer check)
     end
 end

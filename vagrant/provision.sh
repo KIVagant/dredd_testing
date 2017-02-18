@@ -20,4 +20,5 @@ sudo yum -y install curl git nodejs npm php70w-cli --skip-broken \
 && yum -y install gcc-c++ make \
 && sudo npm cache clean \
 && sudo npm install dredd -g \
-&& sudo npm install express -g
+&& sudo npm install express -g \
+&& echo "Done"
